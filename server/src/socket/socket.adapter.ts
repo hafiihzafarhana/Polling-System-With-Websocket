@@ -1,7 +1,9 @@
 import { INestApplicationContext, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import { ServerOptions } from 'socket.io';
+import { NextFunction } from 'express';
+import { ServerOptions, Socket, Server } from 'socket.io';
 
 // digunakan untuk memberikan cors origin pada gateway secara dinamis
 export class DynamicSocketIoAdapter extends IoAdapter {
@@ -30,6 +32,43 @@ export class DynamicSocketIoAdapter extends IoAdapter {
       cors,
     };
 
-    return super.createIOServer(port, optionWithCors);
+    const jwtService = this.app.get(JwtService); // dapatkan instance JwtService
+
+    const server: Server = super.createIOServer(port, optionWithCors); // mengatur option untuk cors
+
+    // lakukan check dengan middleware pada namespace polls yang apabila ada koneksi akan berjalan atau masuk
+    // akan selalu menunggu adanya koneksi karena sudah pasti koneksi untuk client ke server selalu terbuka
+    server.of('polls').use(createTokenMiddleware(jwtService, this.logger));
+
+    return server; // jika berhasil akan masuk ke polls.gateway
   }
 }
+
+type AuthPayload = {
+  userId: string;
+  pollId: string;
+  name: string;
+};
+
+export type SocketWithAuth = Socket & AuthPayload;
+
+const createTokenMiddleware =
+  (jwtService: JwtService, logger: Logger) =>
+  (socket: SocketWithAuth, next: NextFunction) => {
+    const token =
+      socket.handshake.auth.token || socket.handshake.headers['token'];
+
+    logger.debug(
+      `Validating auth token before connection with token: ${token}`,
+    );
+
+    try {
+      const payload = jwtService.verify(token);
+      socket.userId = payload.userId;
+      socket.pollId = payload.pollId;
+      socket.name = payload.name;
+      next();
+    } catch (error) {
+      next(new Error('FORBIDDEN'));
+    }
+  };

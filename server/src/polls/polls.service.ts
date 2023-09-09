@@ -40,7 +40,6 @@ export class PollsService {
 
   async joinPoll(data: JoinPollType) {
     const userId = createUserId(); // for people who joined the poll
-
     const joinedPoll = await this.pollsRepository.getPoll(data.pollId);
 
     const signedToken = new JwtUtil(this.jwtService).signToken({

@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request: RequestWithAuth = context.switchToHttp().getRequest();
 
     const authHeader = request.headers.authorization;
 
@@ -40,7 +40,7 @@ export class AuthGuard implements CanActivate {
       request.pollId = payload.pollId;
       request.name = payload.name;
 
-      return request;
+      return true;
     } catch (error) {
       throw new ForbiddenException('Invalid Authorization Request');
     }

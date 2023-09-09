@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { ioredis_key } from 'src/redis/redis.module';
 import { Redis } from 'ioredis';
@@ -68,6 +69,8 @@ export class PollsRepository {
     const key = `polls:${pollID}`;
     try {
       const pollJSON = await this.redisClient.call('JSON.GET', key, '.');
+
+      if (!pollJSON) throw new NotFoundException();
 
       const currentPoll: Poll = JSON.parse(pollJSON as string);
 
