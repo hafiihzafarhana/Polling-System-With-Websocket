@@ -14,7 +14,7 @@ export class CreatePollDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(1, 50)
+  @Length(8, 50)
   name: string;
 }
 
@@ -24,13 +24,13 @@ export class JoinPollDto {
   pollId: string;
 
   @IsString()
-  @Length(1, 50)
+  @Length(8, 50)
   name: string;
 }
 
 export class RejoinPollDto {
   @IsString()
-  @Length(1, 50)
+  @Length(8, 50)
   name: string;
 
   @IsString()

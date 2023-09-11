@@ -83,7 +83,7 @@ export class PollsRepository {
       return currentPoll;
     } catch (e) {
       this.logger.error(`Failed to get pollID ${pollID}`);
-      throw e;
+      throw new InternalServerErrorException(e);
     }
   }
 
@@ -121,7 +121,7 @@ export class PollsRepository {
       this.logger.error(
         `Failed to add a participant with userID/name: ${userId}/${name} to pollID: ${pollId}`,
       );
-      throw e;
+      throw new InternalServerErrorException(e);
     }
   }
 }

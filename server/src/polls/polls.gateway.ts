@@ -1,15 +1,25 @@
-import { Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   OnGatewayInit,
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketServer,
+  SubscribeMessage,
+  WsException,
 } from '@nestjs/websockets';
 import { PollsService } from './polls.service';
 import { Namespace } from 'socket.io';
 import { SocketWithAuth } from 'src/socket/socket.adapter';
 
+@UsePipes(new ValidationPipe())
+// @UseFilters(new WsCatchAllFilter())
 @WebSocketGateway({
   namespace: 'polls',
 })
@@ -46,5 +56,10 @@ export class PollsGateway
     this.logger.log(`Data: ${client.name}, ${client.pollId}, ${client.userId}`);
     this.logger.log(`WS Client id:${client.id} disconnected`);
     this.logger.log(`Number of disconnected socket is ${sockets.size}`);
+  }
+
+  @SubscribeMessage('sumarno')
+  async test() {
+    throw new WsException('Invalid credentials. 2');
   }
 }
