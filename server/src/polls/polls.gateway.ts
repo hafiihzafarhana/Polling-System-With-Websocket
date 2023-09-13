@@ -17,9 +17,11 @@ import {
 import { PollsService } from './polls.service';
 import { Namespace } from 'socket.io';
 import { SocketWithAuth } from 'src/socket/socket.adapter';
+import { WsBadRequestException } from 'src/exceptions/ws-exception';
+import { AllExceptionsFilter } from 'src/utils/exceptionFilter.util';
 
 @UsePipes(new ValidationPipe())
-// @UseFilters(new WsCatchAllFilter())
+@UseFilters(new AllExceptionsFilter())
 @WebSocketGateway({
   namespace: 'polls',
 })
@@ -60,6 +62,6 @@ export class PollsGateway
 
   @SubscribeMessage('sumarno')
   async test() {
-    throw new WsException('Invalid credentials. 2');
+    throw new BadRequestException('Invalid Data');
   }
 }

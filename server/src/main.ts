@@ -19,7 +19,6 @@ async function bootstrap() {
       new RegExp(`/^http:\/\/192\.168\.1\.([1-9]|[1-9]\d):${portClient}$/`),
     ],
   });
-
   app.useWebSocketAdapter(new DynamicSocketIoAdapter(app, configService));
 
   await app.listen(port);
