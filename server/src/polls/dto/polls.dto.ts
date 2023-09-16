@@ -42,3 +42,10 @@ export class RejoinPollDto {
   @IsNotEmpty()
   userId: string;
 }
+
+export class NominationDto {
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 100)
+  text: string;
+}

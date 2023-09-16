@@ -12,7 +12,7 @@ import { ValidationPipe } from 'src/utils/validationPipe.util';
 import { PollsService } from './polls.service';
 import { AuthGuard, RequestWithAuth } from 'src/utils/authGuard.util';
 
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe()) // untuk validasi data masuk
 @Controller('polls')
 export class PollsController {
   constructor(private readonly pollsService: PollsService) {}

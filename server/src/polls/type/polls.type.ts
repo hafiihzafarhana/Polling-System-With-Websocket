@@ -1,3 +1,5 @@
+import { Nomination } from 'shared/poll-types';
+
 // service type...
 export type CreatePollType = {
   topic: string;
@@ -22,21 +24,28 @@ export type AddParticipantType = {
   name: string;
 };
 
+export type AddNominationType = {
+  pollId: string;
+  userId: string;
+  text: string;
+};
+
 // repository type...
-export interface CreatePollData {
+export type CreatePollData = {
   pollId: string;
   topic: string;
   votesPerVoter: number;
   userId: string;
-}
+};
 
-export interface AddParticipantData {
+export type AddParticipantData = {
   pollId: string;
   userId: string;
   name: string;
-}
+};
 
-export interface RemoveParticipantData {
+export type AddNominationData = {
   pollId: string;
-  userId: string;
-}
+  nominationId: string;
+  nomination: Nomination;
+};

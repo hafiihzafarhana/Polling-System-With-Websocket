@@ -10,7 +10,11 @@ import {
 import { ioredis_key } from 'src/redis/redis.module';
 import { Redis } from 'ioredis';
 import { Poll } from 'shared';
-import { AddParticipantData, CreatePollData } from './type/polls.type';
+import {
+  AddNominationData,
+  AddParticipantData,
+  CreatePollData,
+} from './type/polls.type';
 
 @Injectable()
 export class PollsRepository {
@@ -37,6 +41,7 @@ export class PollsRepository {
       participants: {},
       adminId: userId,
       hasStarted: false,
+      nominations: {},
     };
     console.log(initialPoll);
     this.logger.log(
@@ -128,6 +133,38 @@ export class PollsRepository {
       return this.getPoll(pollId);
     } catch (error) {
       throw new InternalServerErrorException('Failed to remove participant');
+    }
+  }
+
+  async addNomination({
+    pollId,
+    nominationId,
+    nomination,
+  }: AddNominationData): Promise<Poll> {
+    const key = `polls:${pollId}`;
+    const nominationPath = `.nominations.${nominationId}`;
+    try {
+      await this.redisClient.call(
+        'JSON.SET',
+        key,
+        nominationPath,
+        JSON.stringify(nomination),
+      );
+      console.log(pollId, nominationId, nomination);
+      return this.getPoll(pollId);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to add nomination');
+    }
+  }
+
+  async removeNomination(pollId: string, nominationId: string): Promise<Poll> {
+    const key = `polls:${pollId}`;
+    const nominationPath = `.nominations.${nominationId}`;
+    try {
+      await this.redisClient.call('JSON.DEL', key, nominationPath);
+      return this.getPoll(pollId);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to remove nomination');
     }
   }
 }
