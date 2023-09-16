@@ -14,6 +14,7 @@ import {
   AddNominationData,
   AddParticipantData,
   AddParticipantRankingData,
+  AddResultData,
   CreatePollData,
 } from './type/polls.type';
 
@@ -44,8 +45,9 @@ export class PollsRepository {
       hasStarted: false,
       nominations: {},
       rankings: {},
+      results: [],
     };
-    console.log(initialPoll);
+
     this.logger.log(
       `Creating new poll: ${JSON.stringify(initialPoll, null, 2)} with TTL ${
         this.ttl
@@ -82,7 +84,7 @@ export class PollsRepository {
 
       const currentPoll: Poll = JSON.parse(pollJSON as string);
 
-      this.logger.verbose(currentPoll);
+      // this.logger.verbose(currentPoll);
 
       // if (currentPoll?.hasStarted) {
       //   throw new BadRequestException('The pol l has already started');
@@ -152,7 +154,7 @@ export class PollsRepository {
         nominationPath,
         JSON.stringify(nomination),
       );
-      console.log(pollId, nominationId, nomination);
+
       return this.getPoll(pollId);
     } catch (error) {
       throw new InternalServerErrorException('Failed to add nomination');
@@ -204,6 +206,34 @@ export class PollsRepository {
       return this.getPoll(pollId);
     } catch (error) {
       throw new InternalServerErrorException('Failed to ranked');
+    }
+  }
+
+  async addResult({ pollId, results }: AddResultData): Promise<Poll> {
+    const key = `polls:${pollId}`;
+    const resultPath = `.results`;
+
+    try {
+      await this.redisClient.call(
+        'JSON.SET',
+        key,
+        resultPath,
+        JSON.stringify(results),
+      );
+
+      return this.getPoll(pollId);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to add result');
+    }
+  }
+
+  async deletePoll(pollId: string): Promise<void> {
+    const key = `polls:${pollId}`;
+
+    try {
+      await this.redisClient.call('JSON.DEL', key);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to add result');
     }
   }
 }

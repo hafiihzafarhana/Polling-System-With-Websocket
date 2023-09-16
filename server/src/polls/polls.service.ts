@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   AddNominationType,
   AddParticipantType,
@@ -16,6 +20,7 @@ import { PollsRepository } from './polls.repository';
 import { JwtService } from '@nestjs/jwt';
 import { JwtUtil } from 'src/utils/jwt.util';
 import { Poll } from 'shared';
+import { getResult } from 'src/utils/getResult.util';
 
 @Injectable()
 export class PollsService {
@@ -130,5 +135,23 @@ export class PollsService {
       userId,
       rankings,
     });
+  }
+
+  async computeResults(pollId: string) {
+    const poll = await this.pollsRepository.getPoll(pollId);
+
+    if (!poll) throw new NotFoundException('Poll Not Found');
+
+    const results = getResult(
+      poll.rankings,
+      poll.nominations,
+      poll.votesPerVoter,
+    );
+    console.log(results);
+    return this.pollsRepository.addResult({ pollId, results });
+  }
+
+  async cancelPoll(pollId: string): Promise<void> {
+    await this.pollsRepository.deletePoll(pollId);
   }
 }

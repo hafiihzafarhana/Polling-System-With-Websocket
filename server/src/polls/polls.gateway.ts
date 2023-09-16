@@ -180,4 +180,26 @@ export class PollsGateway
 
     this.io.to(client.pollId).emit('poll_updated', updatedPoll);
   }
+
+  @UseGuards(GatewayAdminGuard)
+  @SubscribeMessage('close_poll')
+  async closePoll(@ConnectedSocket() client: SocketWithAuth) {
+    this.logger.debug(
+      `Attempting to close poll ${client.pollId} and computing result`,
+    );
+
+    const updatedPoll = await this.pollsService.computeResults(client.pollId);
+
+    this.io.to(client.pollId).emit('poll_updated', updatedPoll);
+  }
+
+  @UseGuards(GatewayAdminGuard)
+  @SubscribeMessage('cancel_poll')
+  async cancelPoll(@ConnectedSocket() client: SocketWithAuth) {
+    this.logger.debug(`Attempting to cancel poll ${client.pollId}`);
+
+    await this.pollsService.cancelPoll(client.pollId);
+
+    this.io.to(client.pollId).emit('poll_cancelled');
+  }
 }

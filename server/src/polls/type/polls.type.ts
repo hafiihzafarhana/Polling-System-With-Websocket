@@ -1,4 +1,4 @@
-import { Nomination } from 'shared/poll-types';
+import { Nomination, Results } from 'shared/poll-types';
 
 // service type...
 export type CreatePollType = {
@@ -60,4 +60,9 @@ export type AddParticipantRankingData = {
   pollId: string;
   userId: string;
   rankings: string[]; // array akan berisi id nominations
+};
+
+export type AddResultData = {
+  pollId: string;
+  results: Results;
 };
