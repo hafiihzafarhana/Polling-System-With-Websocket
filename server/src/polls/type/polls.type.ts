@@ -30,6 +30,12 @@ export type AddNominationType = {
   text: string;
 };
 
+export type SubmitRangkingType = {
+  pollId: string;
+  userId: string;
+  rankings: string[];
+};
+
 // repository type...
 export type CreatePollData = {
   pollId: string;
@@ -48,4 +54,10 @@ export type AddNominationData = {
   pollId: string;
   nominationId: string;
   nomination: Nomination;
+};
+
+export type AddParticipantRankingData = {
+  pollId: string;
+  userId: string;
+  rankings: string[]; // array akan berisi id nominations
 };

@@ -39,6 +39,7 @@ export class DynamicSocketIoAdapter extends IoAdapter {
 
     // lakukan check dengan middleware pada namespace polls yang apabila ada koneksi akan berjalan atau masuk
     // akan selalu menunggu adanya koneksi karena sudah pasti koneksi untuk client ke server selalu terbuka
+    // digunakan untuk check apakah pengguna memiliki token atau tidak
     server.of('polls').use(createTokenMiddleware(jwtService, this.logger));
 
     return server; // jika berhasil akan masuk ke polls.gateway

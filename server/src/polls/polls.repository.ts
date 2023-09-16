@@ -13,6 +13,7 @@ import { Poll } from 'shared';
 import {
   AddNominationData,
   AddParticipantData,
+  AddParticipantRankingData,
   CreatePollData,
 } from './type/polls.type';
 
@@ -42,6 +43,7 @@ export class PollsRepository {
       adminId: userId,
       hasStarted: false,
       nominations: {},
+      rankings: {},
     };
     console.log(initialPoll);
     this.logger.log(
@@ -165,6 +167,43 @@ export class PollsRepository {
       return this.getPoll(pollId);
     } catch (error) {
       throw new InternalServerErrorException('Failed to remove nomination');
+    }
+  }
+
+  async startPoll(pollId: string): Promise<Poll> {
+    const key = `polls:${pollId}`;
+    try {
+      await this.redisClient.call(
+        'JSON.SET',
+        key,
+        '.hasStarted',
+        JSON.stringify(true),
+      );
+
+      return this.getPoll(pollId);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to start poll');
+    }
+  }
+
+  async addParticipantRankings({
+    pollId,
+    userId,
+    rankings,
+  }: AddParticipantRankingData): Promise<Poll> {
+    const key = `polls:${pollId}`;
+    const rankingPath = `rankings.${userId}`;
+    try {
+      await this.redisClient.call(
+        'JSON.SET',
+        key,
+        rankingPath,
+        JSON.stringify(rankings),
+      );
+
+      return this.getPoll(pollId);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to ranked');
     }
   }
 }

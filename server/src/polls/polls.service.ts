@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   AddNominationType,
   AddParticipantType,
   CreatePollType,
   JoinPollType,
   RejoinPollType,
+  SubmitRangkingType,
 } from './type/polls.type';
 import {
   createPollId,
@@ -105,5 +106,29 @@ export class PollsService {
 
   async removeNomination(pollId: string, nominationId: string): Promise<Poll> {
     return this.pollsRepository.removeNomination(pollId, nominationId);
+  }
+
+  async startPoll(pollId: string): Promise<Poll> {
+    return this.pollsRepository.startPoll(pollId);
+  }
+
+  async addParticipantRankings({
+    pollId,
+    userId,
+    rankings,
+  }: SubmitRangkingType): Promise<Poll> {
+    const hasPollStarted = await this.pollsRepository.getPoll(pollId);
+
+    if (!hasPollStarted.hasStarted) {
+      throw new BadRequestException(
+        "Participant can't ranked untul poll has started",
+      );
+    }
+
+    return this.pollsRepository.addParticipantRankings({
+      pollId,
+      userId,
+      rankings,
+    });
   }
 }

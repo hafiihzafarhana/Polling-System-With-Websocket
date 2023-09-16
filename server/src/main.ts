@@ -19,6 +19,8 @@ async function bootstrap() {
       new RegExp(`/^http:\/\/192\.168\.1\.([1-9]|[1-9]\d):${portClient}$/`),
     ],
   });
+
+  // check apakah pengguna memiliki authorization
   app.useWebSocketAdapter(new DynamicSocketIoAdapter(app, configService));
 
   await app.listen(port);

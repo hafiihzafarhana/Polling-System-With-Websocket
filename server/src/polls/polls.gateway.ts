@@ -149,4 +149,35 @@ export class PollsGateway
 
     this.io.to(client.pollId).emit('poll_updated', updatedPoll);
   }
+
+  @UseGuards(GatewayAdminGuard)
+  @SubscribeMessage('start_poll')
+  async startPoll(
+    @MessageBody('id') id: string,
+    @ConnectedSocket() client: SocketWithAuth,
+  ) {
+    this.logger.debug(
+      `Attempting to start poll ${client.pollId} by ${client.userId}`,
+    );
+
+    const updatedPoll = await this.pollsService.startPoll(id);
+
+    this.io.to(client.pollId).emit('poll_updated', updatedPoll);
+  }
+
+  @SubscribeMessage('submit_rankings')
+  async submitRankings(
+    @MessageBody('rankings') rankings: string[],
+    @ConnectedSocket() client: SocketWithAuth,
+  ) {
+    this.logger.debug(`Attempting to submit rankings to ${client.pollId}`);
+
+    const updatedPoll = await this.pollsService.addParticipantRankings({
+      pollId: client.pollId,
+      userId: client.userId,
+      rankings,
+    });
+
+    this.io.to(client.pollId).emit('poll_updated', updatedPoll);
+  }
 }
