@@ -8,12 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 
 import { Request } from 'express';
-
-type AuthPayload = {
-  userId: string;
-  pollId: string;
-  name: string;
-};
+import { AuthPayload } from 'src/type/auth.type';
 
 export type RequestWithAuth = Request & AuthPayload;
 
@@ -39,7 +34,6 @@ export class AuthGuard implements CanActivate {
       request.userId = payload.sub;
       request.pollId = payload.pollId;
       request.name = payload.name;
-
       return true;
     } catch (error) {
       throw new ForbiddenException('Invalid Authorization Request');

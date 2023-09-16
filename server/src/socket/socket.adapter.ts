@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { NextFunction } from 'express';
-import { ServerOptions, Socket, Server } from 'socket.io';
+import { ServerOptions, Server } from 'socket.io';
+import { SocketWithAuth } from 'src/type/auth.type';
 
 // digunakan untuk memberikan cors origin pada gateway secara dinamis
 export class DynamicSocketIoAdapter extends IoAdapter {
@@ -44,14 +45,6 @@ export class DynamicSocketIoAdapter extends IoAdapter {
   }
 }
 
-type AuthPayload = {
-  userId: string;
-  pollId: string;
-  name: string;
-};
-
-export type SocketWithAuth = Socket & AuthPayload;
-
 const createTokenMiddleware =
   (jwtService: JwtService, logger: Logger) =>
   (socket: SocketWithAuth, next: NextFunction) => {
@@ -64,7 +57,7 @@ const createTokenMiddleware =
 
     try {
       const payload = jwtService.verify(token);
-      socket.userId = payload.userId;
+      socket.userId = payload.sub;
       socket.pollId = payload.pollId;
       socket.name = payload.name;
       next();

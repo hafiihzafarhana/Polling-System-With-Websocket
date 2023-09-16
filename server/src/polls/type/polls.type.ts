@@ -16,16 +16,27 @@ export type RejoinPollType = {
   name: string;
 };
 
-// repository type...
-export type CreatePollData = {
-  pollId: string;
-  topic: string;
-  votesPerVoter: number;
-  userId: string;
-};
-
-export type AddParticipantData = {
+export type AddParticipantType = {
   pollId: string;
   userId: string;
   name: string;
 };
+
+// repository type...
+export interface CreatePollData {
+  pollId: string;
+  topic: string;
+  votesPerVoter: number;
+  userId: string;
+}
+
+export interface AddParticipantData {
+  pollId: string;
+  userId: string;
+  name: string;
+}
+
+export interface RemoveParticipantData {
+  pollId: string;
+  userId: string;
+}
