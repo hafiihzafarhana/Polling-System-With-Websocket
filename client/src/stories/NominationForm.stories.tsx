@@ -20,15 +20,15 @@ export default {
 
 const nominations: Nominations = {
   item1: {
-    userID: '1',
+    userId: '1',
     text: 'Nominanationaroo 1',
   },
   item2: {
-    userID: '2',
+    userId: '2',
     text: 'Nominanationaroo 2',
   },
   item3: {
-    userID: '3',
+    userId: '3',
     text: 'Nominanationaroo 3',
   },
 };
