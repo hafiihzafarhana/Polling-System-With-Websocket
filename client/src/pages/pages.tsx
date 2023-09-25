@@ -1,32 +1,45 @@
 // For switch page
 
-import React from 'react';
-import Welcome from './Welcome';
-import { AppPage, state } from '../action/state';
-import Join from './Join';
-import Create from './Create';
+import React, { useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useSnapshot } from 'valtio';
+import Create from './Create';
+import Join from './Join';
+import Welcome from './Welcome';
+import { AppPage, state } from './../action/state';
+import WaitingRoom from './WaitingRoom';
 
 const routeConfig = {
   [AppPage.Welcome]: Welcome,
-  [AppPage.Join]: Join,
   [AppPage.Create]: Create,
+  [AppPage.Join]: Join,
+  [AppPage.WaitingRoom]: WaitingRoom,
 };
 
 const Pages: React.FC = () => {
-  const currState = useSnapshot(state);
+  const currentState = useSnapshot(state);
+  const pageRefs: Record<string, React.RefObject<HTMLDivElement>> = {
+    [AppPage.Welcome]: useRef<HTMLDivElement>(null),
+    [AppPage.Create]: useRef<HTMLDivElement>(null),
+    [AppPage.Join]: useRef<HTMLDivElement>(null),
+    [AppPage.WaitingRoom]: useRef<HTMLDivElement>(null),
+  };
+
   return (
     <>
       {Object.entries(routeConfig).map(([page, Component]) => (
         <CSSTransition
           key={page}
-          in={page === currState.currentPage}
+          in={page === currentState.currentPage}
           timeout={500}
-          classNames={'page'}
+          classNames="page"
           unmountOnExit
+          nodeRef={pageRefs[page]}
         >
-          <div className="page mobile-height max-w-screen-sm mx-auto py-8 px-4 overflow-y-auto">
+          <div
+            className={`page mobile-height max-w-screen-sm mx-auto py-8 px-4 overflow-y-auto `}
+            ref={pageRefs[page]}
+          >
             <Component />
           </div>
         </CSSTransition>
