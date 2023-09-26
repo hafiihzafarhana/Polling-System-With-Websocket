@@ -16,7 +16,6 @@ const makeRequest = async <T>(
   endpoint: string,
   reqInit?: RequestInit
 ): Promise<MakeRequestResponse<T>> => {
-  console.log(typeof reqInit);
   try {
     const response = await fetch(`${baseApiUrl}${endpoint}`, {
       mode: 'cors',

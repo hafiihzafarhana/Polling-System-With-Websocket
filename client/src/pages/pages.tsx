@@ -1,12 +1,12 @@
 // For switch page
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useSnapshot } from 'valtio';
 import Create from './Create';
 import Join from './Join';
 import Welcome from './Welcome';
-import { AppPage, state } from './../action/state';
+import { AppPage, actions, state } from './../action/state';
 import WaitingRoom from './WaitingRoom';
 
 const routeConfig = {
@@ -24,6 +24,10 @@ const Pages: React.FC = () => {
     [AppPage.Join]: useRef<HTMLDivElement>(null),
     [AppPage.WaitingRoom]: useRef<HTMLDivElement>(null),
   };
+
+  useEffect(() => {
+    actions.ifAfterRefreshAndNoAccessToken();
+  }, []);
 
   return (
     <>
