@@ -26,8 +26,11 @@ const Pages: React.FC = () => {
   };
 
   useEffect(() => {
-    actions.ifAfterRefreshAndNoAccessToken();
-  }, []);
+    // jika data user ada dan poll belum dimulai, maka akan masuk ke ruang tunggu
+    if (currentState.me?.id && !currentState.poll?.hasStarted) {
+      actions.setPage(AppPage.WaitingRoom);
+    }
+  }, [currentState.me?.id, currentState.poll?.hasStarted]);
 
   return (
     <>

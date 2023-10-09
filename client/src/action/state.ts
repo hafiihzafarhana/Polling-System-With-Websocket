@@ -89,21 +89,23 @@ const actions = {
     state.isLoading = false;
   },
   // melakukan pemeriksaan jika tidak ada data reduxnya, ini terjadi mkemungkinan besar saat halaman direfresh
-  ifAfterRefreshAndNoAccessToken: (): void => {
-    if (!state.accessToken && !state.poll) {
-      localStorage.removeItem('accessToken');
-    }
-  },
+  // ifAfterRefreshAndNoAccessToken: (): void => {
+  //   if (!state.accessToken && !state.poll) {
+  //     localStorage.removeItem('accessToken');
+  //   }
+  // },
   // inisialisasi socket
   initializaSocket: (): void => {
     // jika tidak ada socket, buat sebuah koneksi
     if (!state.socket) {
+      console.log('yuki');
       state.socket = ref(
         createSocketWithHandlers({ socketIOUrl, state, actions })
       );
     }
     // jika sudah ada socket, maka lakukan koneksi
     else {
+      console.log('Yuma');
       state.socket.connect();
     }
   },
@@ -116,13 +118,14 @@ const actions = {
 // apabila ada data accessToken di dalam redux state, maka lakukan ini
 subscribeKey(state, 'accessToken', () => {
   console.log(state.currentPage);
-  if (state.accessToken && state.poll) {
+  if (state.accessToken) {
     console.log(1);
     localStorage.setItem('accessToken', state?.accessToken);
-  } else {
-    console.log(2);
-    localStorage.removeItem('accessToken');
   }
+  // else {
+  //   console.log(2);
+  //   localStorage.removeItem('accessToken');
+  // }
 });
 
 export type AppActions = typeof actions;

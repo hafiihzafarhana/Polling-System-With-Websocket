@@ -3,8 +3,9 @@ import { actions } from '../action/state';
 
 const WaitingRoom: React.FC = () => {
   useEffect(() => {
-    console.log('Waiting Room');
-    actions.initializaSocket();
+    console.log('Waiting Room 2 a');
+    // actions.initializaSocket();
+    console.log('Waiting Room 2 b');
   }, []);
 
   return (
